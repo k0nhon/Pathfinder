@@ -19,10 +19,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Restore seen-jobs cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: pathfinder/data/tracker.db
           key: tracker-db-${{ github.run_id }}
@@ -46,7 +46,7 @@ jobs:
           KEYS: ${{ secrets.KEYS }}
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.11"
 
@@ -63,7 +63,7 @@ jobs:
 
       - name: Save seen-jobs cache
         if: always()
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
           path: pathfinder/data/tracker.db
           key: tracker-db-${{ github.run_id }}
