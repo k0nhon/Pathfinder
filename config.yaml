@@ -1,0 +1,302 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# PATHFINDER — config.yaml
+# One file. Edit this to make Pathfinder yours.
+# ═══════════════════════════════════════════════════════════════════════════════
+# ⚠️  This file contains your personal data.
+# Do not push it to a public repo after filling it in.
+# Add config.yaml to your .gitignore if you fork this publicly.
+
+
+# ── YOUR PROFILE ──────────────────────────────────────────────────────────────
+# The AI reads your profile when scoring each job posting.
+# Be specific — actual metrics, real outcomes, technologies used.
+
+profile:
+  name: "Ivan Pechenega"
+
+  # One-line positioning — the AI leads with this when evaluating fit
+  framing: "Business admin student with hands-on customer service and market research experience"
+
+  # The 6-8 facts the AI weighs every role against.
+  # Write these as evidence, not job description. Specific outcomes beat vague claims.
+  # Bad:  "Strong Salesforce experience"
+  # Good: "Recovered a failed multi-partner implementation, ran $Xm revenue through the rebuilt org"
+  highlights:
+  - "Handled register operations, direct customer service, and on-the-spot problem resolution during a 2-month Christmas market job, working 10-hour shifts, 3 days a week, in a 2-person team"
+  - "Independently resolved a workplace safety hazard by coordinating directly with local authorities and management, then executing the fix on the spot"
+  - "Resolved multiple customer complaints independently at a retail job, including replacing unsatisfactory products without escalation"
+  - "Completed a 4-month minijob at Kaufland's bakery department handling baking support, product sorting, and stock-keeping, working in German with colleagues"
+  - "Reached working German vocabulary within 2 weeks of starting a German-only workplace; holds a B1 German certificate"
+  - "C1-level English proficiency (IELTS 7.0)"
+  - "Conducted independent research on Munich-area land and property valuation practices, including EU and German-specific regulatory context, delivered as a presentation"
+  - "Comfortable with Excel, PowerPoint, Canva, Adobe Illustrator, DB Browser, basic SQL, and basic Python/HTML/CSS"
+
+  certifications_held:
+   - "B1 German Certificate"
+   - "IELTS 7.0 (C1 English)"
+
+  languages:
+    - "English"
+    - "German"
+    - "Ukrainian"
+
+  # Where you're willing to work
+  location_prefs:
+    base: "Berlin, Germany"
+    hybrid_ok:
+      - "Frankfurt (Oder)"
+      - "Berlin"
+      - "Potsdam"
+    open_to_remote: true
+
+
+# ── SCORING CRITERIA ──────────────────────────────────────────────────────────
+# What makes a role a YES, MAYBE, or NO.
+#
+# DECISION HIERARCHY:
+#   1. Any disqualifier present = NO, no exceptions
+#   2. No disqualifiers + 3 or more core/strong qualify signals = YES
+#   3. No disqualifiers + partial qualify signals = MAYBE
+#   Neutral signals reduce confidence but cannot block a YES.
+#
+# CONFIDENCE:
+#   HIGH = unambiguous decision with strong direct evidence
+#   MEDIUM = clear decision but some signals are soft or inferred
+#   LOW = limited information or significant uncertainty in the posting
+
+scoring:
+
+  decision_framework:
+
+    hierarchy:
+      - disqualify_overrides_all
+      - qualify_requires_majority_match
+      - neutral_only_if_no_disqualifiers
+
+    outputs:
+      decision: ["YES", "MAYBE", "NO"]
+      confidence: ["HIGH", "MEDIUM", "LOW"]
+
+    rules:
+      - "If ANY disqualifier is clearly present → decision = NO"
+      - "If NO disqualifiers AND 3+ qualify signals → decision = YES"
+      - "If NO disqualifiers AND partial qualify signals → decision = MAYBE"
+      - "Neutral signals can lower confidence but cannot override a YES"
+      - "Unclear or missing information defaults to MAYBE, not YES"
+
+
+  qualify_signals:
+
+    core:
+      - "Role is explicitly a Werkstudent (student) position"
+      - "Role is customer-facing, involves direct client/customer interaction or support"
+      - "Role involves office administration, coordination, or backoffice support tasks"
+
+    strong:
+      - "Role requires German at B1-B2 conversational level, not native/C1+"
+      - "Role involves team-based coordination with colleagues rather than solo independent work"
+      - "Role involves handling on-the-spot issues, escalations, or problem resolution"
+
+    supporting:
+      - "Role is in event coordination, project coordination, or logistics support"
+      - "Role mentions English as a working language"
+      - "Role is flexible/part-time friendly around a student schedule"
+
+neutral_signals:
+
+  acceptable_tradeoffs:
+    - "Role mentions Excel or PowerPoint as a tool used, but not as the core skill required"
+    - "Role touches on market research or data entry as a minor task, not the primary responsibility"
+    - "Role is in an unfamiliar industry (e.g. real estate, policy, NGO) where your research background transfers"
+    - "Role requires 'verhandlungssicheres Deutsch' (business-fluent/negotiation-level) without an explicit C1/C2 label — treat as ambiguous, not a hard requirement"
+
+  interpretation_rule:
+    - "Neutral signals reduce confidence but do not block a YES"
+    - "Multiple neutral signals without strong qualify signals → MAYBE"
+
+disqualify_signals:
+
+  hard:
+    - "Requires programming, software development, or coding as a core responsibility"
+    - "Requires data analysis, BI tooling, dashboards, or SQL-based reporting as a core deliverable (not simple spreadsheet data entry, cleanup, or migration)"
+    - "Requires CRM system management or ownership as a core responsibility"
+    - "Requires graphic design, video editing, or content creation as a core responsibility"
+    - "Requires electronics repair or technical hardware troubleshooting as a core responsibility"
+    - "Salary/stipend explicitly below your floor"
+    - "Requires work authorization you do not hold"
+
+  experience_mismatch:
+    - "Requires German at C1, C2, native fluency, or explicit CEFR-equivalent phrasing such as 'sehr gute Deutschkenntnisse' or 'business fluent German'"
+    - "Requires multiple years of professional experience in the target field"
+    - "Requires a completed degree rather than an ongoing student status"
+
+  domain_lockout:
+    - "Requires deep technical/engineering domain expertise you cannot credibly claim"
+
+  evidence_requirements:
+
+    must_extract:
+      - "1-2 direct quotes from the job description supporting the decision"
+      - "Explicit mention of any disqualifier triggered"
+      - "Explicit mention of strongest qualifying signal"
+      - "Educational requirements (degree, certification) when explicitly stated - flag in reasoning but do not use as a hard gate"
+
+    rules:
+      - "If no evidence is found, downgrade confidence"
+      - "Do not infer requirements that are not stated"
+
+
+  output_format:
+
+    required_fields:
+      - decision
+      - confidence
+      - reasoning_summary
+      - top_qualifier
+      - disqualifier_triggered
+      - evidence_quotes
+
+    constraints:
+      - "reasoning_summary must be under 40 words"
+      - "evidence_quotes must be verbatim text"
+
+
+# ── SEARCH SETTINGS ───────────────────────────────────────────────────────────
+# What to search for, where, and how aggressively.
+
+search:
+  queries:
+    - "Werkstudent Office Management"
+    - "Werkstudent Administration"
+    - "Werkstudent Backoffice"
+    - "Werkstudent Customer Service"
+    - "Werkstudent Support"
+    - "Werkstudent Event Koordination"
+    - "Werkstudent Projektkoordination"
+    - "Working Student Office"
+    - "Working Student Administration"
+    - "Working Student Customer Service"
+    - "Working Student Support"
+    - "Working Student Coordination"
+
+
+  locations:
+    - "Germany"
+
+  sources:
+    - linkedin        # working reliably
+    # - indeed        # scraping unreliable, left for future use
+    # - glassdoor     # scraping unreliable, left for future use
+
+  hours_old: 336       # 2-week lookback
+  max_per_query: 20
+  remote_only: false
+  ai_filter: true
+
+  target_roles: >
+    Werkstudent Office Management, Werkstudent Administration, Werkstudent Backoffice Support, 
+    Werkstudent Documentation & Data Management, Werkstudent Customer Service, Werkstudent Client Support, 
+    Werkstudent Support Operations, Werkstudent Event Management, Werkstudent Event Coordination, 
+    Werkstudent Project Coordination, Werkstudent Market Research, 
+    Werkstudent Competitive Analysis, 
+    Werkstudent Data Entry & Dataset Maintenance, 
+    Werkstudent Integration Services (NGO/relocation),
+    Werkstudent International Relations Support
+    Werkstudent Büromanagement, Werkstudent Administration, Werkstudent Backoffice-Unterstützung,
+    Werkstudent Dokumentation & Datenmanagement, Werkstudent Kundenservice, Werkstudent Kundenbetreuung, 
+    Werkstudent Support Operations, Werkstudent Veranstaltungsmanagement, Werkstudent Veranstaltungskoordination, 
+    Werkstudent Projektkoordination, Werkstudent Marktforschung, Werkstudent Wettbewerbsanalyse, Werkstudent Dateneingabe & Datenpflege,
+    Werkstudent Integrationsservices (NGO/Relocation), Werkstudent Internationale Beziehungen
+  title_keywords:
+    - "werkstudent"
+    - "working student"
+    - "studentische aushilfe"
+    - "studentische hilfskraft"
+
+  title_exclude:
+    - "software engineer"
+    - "developer"
+    - "data scientist"
+    - "data engineer"
+    - "graphic designer"
+    - "video editor"
+    - "electrician"
+    - "handwerker"
+
+
+# ── SYSTEM ────────────────────────────────────────────────────────────────────
+# Rarely needs changing.
+
+llm:
+  provider: groq
+  groq_model: openai/gpt-oss-120b
+  max_tokens: 4096
+
+# ── ACCESSIBILITY (PATHFINDER+) ───────────────────────────────────────────────
+# Optional. Scores postings for inclusive vs exclusionary language from a
+# disabled-worker perspective, on a parallel axis that does NOT change YES/MAYBE/NO.
+# Remove this block or set enabled: false to restore byte-identical behavior.
+#
+# No regex, no phrase lists. The LLM reads the posting and interprets these
+# rules as written. Every accessibility read must cite a verbatim quote.
+
+accessibility:
+  enabled: true
+
+  method_based_signals:
+    description: >
+      Method-based physical or sensory requirements stated as the method itself
+      rather than the outcome. Red flags ONLY when not plausibly essential to
+      the role as described. "Lift 50 lbs" in a Salesforce consultant role is
+      method-based exclusion. "Physical stamina" in a paramedic role is legitimate.
+    examples:
+      - "Must lift 50 lbs (vs. move equipment between sites)"
+      - "Stand for long periods (vs. conduct on-site sessions)"
+      - "Valid driver's license required (vs. travel to client locations)"
+      - "Must be able to hear phone conversations (vs. communicate with clients)"
+    guardrail:
+      - "Flag only when the physical method is not plausibly essential to the role."
+      - "A method-based requirement in a role where the outcome could be achieved another way is the exclusion signal."
+
+  operational_signals:
+    description: >
+      Concrete, operational green flags. Specific mechanisms, not vibes.
+      These are what earn an INCLUSIVE read. Absence of all of these, paired
+      with boilerplate, is a performative-inclusion pattern.
+    examples:
+      - "Accommodation process explicitly stated (how to request, who to contact)"
+      - "Disability ERG or affinity group mentioned by name"
+      - "Remote-first or fully remote stated as a structural default, not an exception"
+      - "Outcome-based verbs used for responsibilities (deliver, produce, resolve) rather than method-based verbs"
+      - "Scent-free workplace"
+      - "Quiet zones, sensory-aware office design, or flexible workspace options"
+      - "Flexible hours or async-first collaboration stated as a norm"
+
+  boilerplate_suppression:
+    description: >
+      EEO disclaimers and generic diversity statements. Treated as negative
+      signal: zero predictive weight. MUST NOT be cited as evidence of inclusion.
+      A posting with only boilerplate and no operational signals is MIXED or
+      EXCLUSIONARY, never INCLUSIVE.
+    examples:
+      - "Equal opportunity employer"
+      - "We celebrate diversity / diverse perspectives / diverse backgrounds"
+      - "All qualified applicants will receive consideration without regard to..."
+      - "We are committed to building an inclusive workplace"
+    rule:
+      - "Boilerplate is a zero-weight signal. Never cite it as accessibility_evidence for an INCLUSIVE read."
+      - "Boilerplate plus no operational signals = performative inclusion = MIXED or EXCLUSIONARY."
+
+  structural_watch_list:
+    description: >
+      Structural patterns that look neutral but function as exclusion when
+      surfaced. Call these out explicitly in the accessibility_evidence when present.
+    examples:
+      - "Hybrid with specified in-office day counts (e.g., '3 days in office')"
+      - "Video-on mandates for meetings"
+      - "'Consistent attendance is an essential function of this role'"
+      - "'Must be available during core hours' with no async alternative"
+
+  # performative_signals:
+  #   v2 - cultural/affect mandates ("rockstar", "bubbly", "thrives in chaos",
+  #   "we're a family"). Not scored in v1.
